@@ -26,6 +26,7 @@ You need `uv`, `Python 3.10+`, and `Docker` installed.
 cd backend
 # Install required dependencies
 uv add fastapi uvicorn geopy requests folium polyline geopandas fiona mapclassify
+cd ..
 ```
 
 ### 2. Start the Valhalla Routing Server
@@ -48,8 +49,11 @@ uv run python atkis_parser.py
 ```
 *Output: Open `backend/atkis_widths_map.html` to see roads color-coded by width (Red < 2.55m).*
 
-### 4. Run the Garbage Truck Routing API
-We expose Valhalla's TSP (Traveling Salesperson) optimization via a FastAPI service. It handles geocoding of raw address strings into GPS coordinates and forces a complete round-trip loop back to the depot!
+### 4. Run the Multi-Vehicle Routing API
+We built a highly modular FastAPI service that exposes Valhalla's TSP (Traveling Salesperson Problem) optimization. 
+* **Multi-Truck Support:** You can send multiple fleets in a single request, and each truck will get its own fully optimized, color-coded route.
+* **Smart Caching:** Features a built-in SQLite persistence layer (`routes_cache.db`). If a route was already calculated, it is instantly loaded from the cache to save compute time!
+* **Geocoding:** Handles raw address strings natively by automatically converting them into GPS coordinates.
 
 ```bash
 cd backend
@@ -57,32 +61,26 @@ uv run uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 ### 5. Testing the API
-Once the API is running, visit **[http://localhost:8000/docs](http://localhost:8000/docs)** to test the `/optimize_route` endpoint.
+Once the API is running, visit **[http://localhost:8000/docs](http://localhost:8000/docs)** to test the `/optimize_route` endpoint using Swagger UI.
 
-**Test Case 1: Random Points**
-Generates random safe locations in Jena and routes the truck.
-```json
-{
-  "mode": "random",
-  "num_points": 10
-}
-```
-
-**Test Case 2: Custom Addresses**
-Input natural street names. The API geocodes them and generates the optimal pickup loop.
+**Test Case 1: Multiple Trucks with Custom Addresses**
+Assign specific addresses to multiple trucks. The API will geocode them and generate individual optimized loops returning to the depot.
 ```json
 {
   "mode": "custom",
-  "addresses": [
-    "Holzmarkt",
-    "Markt",
-    "Löbdergraben 10"
+  "trucks": [
+    {
+      "truck_id": "Truck 1 (Red)",
+      "addresses": ["Holzmarkt", "Markt"]
+    },
+    {
+      "truck_id": "Truck 2 (Blue)",
+      "addresses": ["Löbdergraben 10", "Teichgasse"]
+    },
+    {
+      "truck_id": "Truck 3 (Green)",
+      "addresses": ["Lutherstraße 12", "Westbahnhofstraße"]
+    }
   ]
 }
 ```
-
-**Output Visualization:**
-After executing the API call, open **`backend/api_tsp_map.html`** in your browser. You will see:
-1. Numbered stops showing the exact optimized pickup order.
-2. Animated directional arrows (AntPath) showing the exact path the truck takes.
-3. A closed loop that safely returns the truck to the depot.
