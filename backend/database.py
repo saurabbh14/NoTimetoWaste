@@ -22,6 +22,9 @@ def get_route_hash(locations):
     return hashlib.sha256(stable_string.encode('utf-8')).hexdigest()
 
 def get_cached_route(route_hash):
+    # Ensure table exists in case file was deleted while server was running
+    init_db() 
+    
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     cursor.execute("SELECT valhalla_response FROM cached_routes WHERE route_hash = ?", (route_hash,))

@@ -1,10 +1,42 @@
 import requests
 import random
+import json
+import os
 from typing import List
 from geopy.geocoders import Nominatim
 
 VALHALLA_URL = "http://localhost:8002/optimized_route"
 geolocator = Nominatim(user_agent="notimetowaste_hackathon")
+
+def get_live_avoid_locations():
+    avoid_locations = []
+    try:
+        traffic_file = os.path.join(os.path.dirname(__file__), '..', 'Live_update', 'traffic_data.geojson')
+        if os.path.exists(traffic_file):
+            with open(traffic_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                
+            for feature in data.get('features', []):
+                props = feature.get('properties', {})
+                # Avoid if road is closed or traffic is very heavy (< 10 km/h)
+                if props.get('roadClosure', False) or props.get('currentSpeed', 999) < 10:
+                    geom = feature.get('geometry', {})
+                    if geom.get('type') == 'LineString':
+                        coords = geom.get('coordinates', [])
+                        if coords:
+                            # Take the midpoint of the blocked road to keep well under Valhalla's 50 location limit
+                            mid_idx = len(coords) // 2
+                            mid_lon, mid_lat = coords[mid_idx]
+                            # Use a 100m exclusion radius around the midpoint to block the street
+                            avoid_locations.append({"lat": mid_lat, "lon": mid_lon, "radius": 100})
+                            
+                # Strict safety limit to prevent 400 Bad Request
+                if len(avoid_locations) >= 45:
+                    break
+    except Exception as e:
+        print("Could not load live traffic data:", e)
+        
+    return avoid_locations
 
 def get_optimized_route(locations, costing="auto", costing_options=None):
     payload = {
@@ -12,6 +44,12 @@ def get_optimized_route(locations, costing="auto", costing_options=None):
         "costing": costing,
         "units": "kilometers"
     }
+    
+    # Inject live traffic avoid locations safely
+    live_avoids = get_live_avoid_locations()
+    if live_avoids:
+        payload["exclude_locations"] = live_avoids
+        
     if costing_options:
         payload["costing_options"] = costing_options
         

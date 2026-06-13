@@ -16,6 +16,31 @@ def generate_route_map(all_truck_results, start_end_point, output_file="api_tsp_
         icon=folium.Icon(color='black', icon='home'),
         popup="<b>KSJ Depot</b>"
     ).add_to(m)
+    
+    # Overlay Live Traffic Data
+    traffic_file = os.path.join(os.path.dirname(__file__), '..', 'Live_update', 'traffic_data.geojson')
+    
+    def traffic_style(feature):
+        props = feature.get('properties', {})
+        speed = props.get('currentSpeed', 999)
+        closed = props.get('roadClosure', False)
+        
+        if closed:
+            return {'color': '#000000', 'weight': 6, 'opacity': 0.8} # Black for closed
+        elif speed < 15:
+            return {'color': '#ff0000', 'weight': 6, 'opacity': 0.7} # Red for heavy congestion
+        elif speed < 30:
+            return {'color': '#ffa500', 'weight': 5, 'opacity': 0.6} # Orange for moderate traffic
+        else:
+            return {'color': '#00ff00', 'weight': 3, 'opacity': 0.0} # Hide perfectly clear streets
+            
+    if os.path.exists(traffic_file):
+        folium.GeoJson(
+            traffic_file,
+            name="Live Traffic Conditions",
+            style_function=traffic_style,
+            tooltip=folium.GeoJsonTooltip(fields=['currentSpeed', 'roadClosure'], aliases=['Current Speed:', 'Closed:'])
+        ).add_to(m)
 
     for truck_idx, truck_data in enumerate(all_truck_results):
         truck_id = truck_data["truck_id"]
