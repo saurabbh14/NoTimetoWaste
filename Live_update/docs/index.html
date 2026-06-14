@@ -1,0 +1,88 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast</title>
+    <style>
+        /* Ensure the container takes full height of the parent */
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .weather-forecast {
+            height: 100%;
+            overflow-y: auto;
+            padding: 10px;
+            color: #fdf0d5;
+            font-family: Avenir Next;
+        }
+
+        .weather-period {
+            margin-bottom: 10px;
+        }
+
+        .weather-period h3 {
+            margin: 5px 0;
+        }
+
+        .weather-period p {
+            margin: 3px 0;
+        }
+
+        hr {
+            border: 0;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="weather-forecast">
+
+    <div class='weather-period'>
+        <h3>Overnight</h3>
+        <p>Temperature: 57 F</p>
+        <p>Wind: 2 mph SSW</p>
+        <p>Forecast: Clear</p>
+    </div>
+    <hr>
+    
+    <div class='weather-period'>
+        <h3>Saturday</h3>
+        <p>Temperature: 86 F</p>
+        <p>Wind: 1 to 9 mph NNE</p>
+        <p>Forecast: Sunny</p>
+    </div>
+    <hr>
+    
+    <div class='weather-period'>
+        <h3>Saturday Night</h3>
+        <p>Temperature: 57 F</p>
+        <p>Wind: 2 to 8 mph NNW</p>
+        <p>Forecast: Mostly Clear</p>
+    </div>
+    <hr>
+    
+    <div class='weather-period'>
+        <h3>Sunday</h3>
+        <p>Temperature: 87 F</p>
+        <p>Wind: 2 to 9 mph N</p>
+        <p>Forecast: Sunny</p>
+    </div>
+    <hr>
+    
+    <div class='weather-period'>
+        <h3>Sunday Night</h3>
+        <p>Temperature: 57 F</p>
+        <p>Wind: 1 to 8 mph NNE</p>
+        <p>Forecast: Clear</p>
+    </div>
+    <hr>
+    
+    </div>
+</body>
+</html>
