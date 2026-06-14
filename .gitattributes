@@ -1,0 +1,3 @@
+# Tell GitHub to ignore auto-generated map files for language statistics
+backend/*.html linguist-generated=true
+Live_update/*.html linguist-generated=true
