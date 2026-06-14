@@ -6,7 +6,7 @@ export async function geocode(address: string) {
     {
       params: {
         format: "json",
-        q: address,
+        q: `${address}, Jena, Germany`,
       },
     }
   );

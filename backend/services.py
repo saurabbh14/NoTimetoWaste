@@ -59,6 +59,8 @@ def get_optimized_route(locations, costing="auto", costing_options=None):
         return response.json()
     except requests.exceptions.RequestException as e:
         print(f"Error connecting to Valhalla: {e}")
+        if hasattr(e, 'response') and e.response is not None:
+            print(f"Valhalla Error Content: {e.response.text}")
         return None
 
 def generate_random_locations(start_end_point, num_points=10):

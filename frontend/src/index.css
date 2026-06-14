@@ -103,6 +103,21 @@ code,
   color: var(--text-h);
 }
 
+/* Animated Leaflet Polyline */
+path.animated-path {
+  stroke-dasharray: 15 30 !important;
+  animation: ant-dash 1s linear infinite !important;
+}
+
+@keyframes ant-dash {
+  from {
+    stroke-dashoffset: 45;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 code {
   font-size: 15px;
   line-height: 135%;
