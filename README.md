@@ -16,6 +16,8 @@ Your task is to develop a prototype that integrates municipal GIS data with Open
 
 ---
 
+![Dashboard Image](./img/Recording%202026-06-15%20102131.gif)
+
 ## 🌟 Key Features & Problem Solving Methods
 
 This repository contains a full MVP application (Backend + Interactive Frontend) for routing 10.6m x 2.55m garbage trucks efficiently through Jena, avoiding narrow streets and optimizing pickup sequences (TSP - Traveling Salesperson Problem).
